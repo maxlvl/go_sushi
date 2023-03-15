@@ -54,10 +54,35 @@ func createRoll(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateRoll(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json")
+  params := mux.Vars(r)
 
+  for i, element := range(rolls) {
+    if element.ID == params["id"] {
+      // remove element from existing rolls slice by recreating it but omitting the found element's index
+      rolls = append(rolls[:i], rolls[i+1:]...)
+      var newRoll Roll
+      json.NewDecoder(r.Body).Decode(&newRoll)
+      newRoll.ID = params["id"]
+      rolls = append(rolls, newRoll)
+      json.NewEncoder(w).Encode(newRoll)
+      return
+    }
+  }
 }
-func deleteRoll(w http.ResponseWriter, r *http.Request) {
 
+func deleteRoll(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json")
+  params := mux.Vars(r)
+
+  for i, element := range(rolls) {
+    if element.ID == params["id"] {
+      // remove element from existing rolls slice by recreating it but omitting the found element's index
+      rolls = append(rolls[:i], rolls[i+1:]...)
+      json.NewEncoder(w).Encode(rolls)
+      return
+    }
+  }
 }
 
 func main() {
